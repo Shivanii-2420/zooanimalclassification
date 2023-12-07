@@ -1,0 +1,45 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Load the zoo dataset
+zoo_data = pd.read_csv('zoo.csv')
+
+# Load the class dataset
+class_data = pd.read_csv('class.csv')
+
+# Merge the datasets based on the class_type
+merged_data = pd.merge(zoo_data, class_data, left_on='class_type', right_on='Class_Number')
+
+# Prepare the Data for Training
+
+# Drop 'animal_name' column and split the data into features (X) and target variable (y)
+X = merged_data.drop(['class_type', 'Class_Number', 'Class_Type', 'Animal_Names', 'animal_name'], axis=1)
+y = merged_data['Class_Type']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train a Random Forest Classifier
+
+# Initialize the Random Forest Classifier
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Train the classifier
+rf_classifier.fit(X_train, y_train)
+
+# Make Predictions and Evaluate the Model
+
+# Make predictions on the test set
+y_pred = rf_classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred)
+
+# Print the results
+print(f'Accuracy: {accuracy}')
+print(f'Confusion Matrix:\n{conf_matrix}')
+print(f'Classification Report:\n{class_report}')
